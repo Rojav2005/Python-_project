@@ -1,0 +1,43 @@
+def prime_factors(num):
+    factors = {}
+    i = 2
+    while i * i <= num:
+        count = 0
+        while num % i == 0:
+            count += 1
+            num //= i
+        if count > 0:
+            factors[i] = count
+        i += 1
+    if num > 1:
+        factors[num] = 1
+    return factors
+
+def sum_prime_factor_indices(n, arr, num):
+    if n == 0 or not arr:
+        print(-1)
+        return
+    
+    # Get the prime factorization of num
+    factors = prime_factors(num)
+    
+    total_sum = 0
+    prime_found = False
+    
+    # Calculate the required sum
+    for prime, exponent in factors.items():
+        if prime < n:  # Check if prime factor can be used as an index
+            total_sum += exponent * arr[prime]
+            prime_found = True
+    
+    if not prime_found:
+        print(0)
+    else:
+        print(total_sum)
+
+# Input reading
+n = int(input())  # size of the array
+arr = list(map(int, input().split()))  # array of integers
+num = int(input())  # the positive integer 'num'
+
+sum_prime_factor_indices(n, arr, num)
