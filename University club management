@@ -1,0 +1,90 @@
+class Club:
+    def __init__(self, club_id, name, description):
+        self.club_id = club_id
+        self.name = name
+        self.description = description
+        self.members = []
+        self.activities = []
+    def add_member(self, student):
+        self.members.append(student)
+    def remove_member(self, student_id):
+        self.members = [member for member in self.members if
+        member.student_id != student_id]
+    def add_activity(self, activity):
+        self.activities.append(activity)
+    def remove_activity(self, activity_id):
+        self.activities = [activity for activity in self.activities if activity.activity_id
+          != activity_id] 
+    def __str__(self):
+        return f"Club[ID: {self.club_id}, Name: {self.name}, Members:{len(self.members)}, Activities: {len(self.activities)}]"
+    
+class Student:
+    def __init__(self, student_id, name, email):
+        self.student_id = student_id
+        self.name = name
+        self.email = email
+    def __str__(self):
+        return f"Student[ID: {self.student_id}, Name: {self.name}]"
+class Activity:
+    def __init__(self, activity_id, title, description, date):
+        self.activity_id = activity_id
+        self.title = title
+        self.description = description
+        self.date = date
+    def __str__(self):
+        return f"Activity[ID: {self.activity_id}, Title: {self.title}, Scheduled:{self.date}]"
+    
+class UniversityClubManagement:
+    def __init__(self):
+        self.clubs = {}
+    def create_club(self, club_id, name, description):
+        if club_id in self.clubs:
+            return "Club ID already exists."
+            self.clubs[club_id] = Club(club_id, name, description)
+            return "Club created successfully."
+    def read_club(self, club_id):
+        return str(self.clubs[club_id]) if club_id in self.clubs else "Club not found."
+    def update_club(self, club_id, name=None, description=None):
+        if club_id in self.clubs:
+            club = self.clubs[club_id]
+            if name:
+                club.name = name
+                if description:
+                    club.description = description
+                return "Club updated successfully."
+            return "Club not found."
+    def delete_club(self, club_id):
+        if club_id in self.clubs:
+            del self.clubs[club_id]
+            return "Club deleted successfully."
+        return "Club not found."
+
+### Part 2: Testing Using unittest Framework
+
+import unittest
+class TestUniversityClubManagement(unittest.TestCase):
+    def setUp(self):
+        self.system = UniversityClubManagement()
+        self.system.create_club(1, "Tech Club", "Club for technology enthusiasts")
+        self.student1 = Student(101, "Alice", "alice@example.com")
+        self.student2 = Student(102, "Bob", "bob@example.com")
+    def test_club_creation(self):
+        self.assertEqual(self.system.create_club(2, "Arts Club", "Club for arts lovers"), "Club created successfully.")
+        self.assertIn(2, self.system.clubs)
+    def test_club_read(self):
+        self.assertIn("Tech Club", self.system.read_club(1))
+    def test_club_update(self):
+        self.assertEqual(self.system.update_club(1, name="Tech and Innovation Club"), "Club updated successfully.")
+        self.assertEqual(self.system.clubs[1].name, "Tech and Innovation Club") 
+    def test_club_deletion(self):
+        self.assertEqual(self.system.delete_club(1), "Club deleted successfully.")
+        self.assertNotIn(1, self.system.clubs)
+    def test_member_management(self):
+        club = self.system.clubs[1]
+        club.add_member(self.student1)
+        club.add_member(self.student2)
+        self.assertEqual(len(club.members), 2)
+        club.remove_member(101)
+        self.assertEqual(len(club.members), 1)
+if __name__ == '__main__':
+    unittest.main()
